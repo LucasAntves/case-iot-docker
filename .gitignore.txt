@@ -1,0 +1,9 @@
+iotproject/
+venv/
+.idea/
+.vscode/
+__pycache__/
+*.pyc
+
+# Dados do Docker
+postgres-data/

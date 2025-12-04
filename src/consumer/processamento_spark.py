@@ -57,7 +57,7 @@ def salvar_no_postgres(df, batch_id):
         logger.error(f"Erro ao salvar Batch {batch_id} no banco: {e}", exc_info=True)
 
 def main():
-    logger.info(f"🔌 Iniciando conexão Spark. Kafka: {KAFKA_BOOTSTRAP_SERVERS} | Postgres: {DB_HOST}")
+    logger.info(f"Iniciando conexão Spark. Kafka: {KAFKA_BOOTSTRAP_SERVERS} | Postgres: {DB_HOST}")
 
     spark = (SparkSession.builder
         .appName("IoT Sensor Consumer")

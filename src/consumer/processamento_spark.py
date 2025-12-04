@@ -3,15 +3,6 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, IntegerType, TimestampType
 
-# --- DEBUG: IMPRIMIR TUDO QUE O CONTAINER VÊ ---
-print("\n" + "="*30)
-print("🔍 INSPECIONANDO VARIÁVEIS DE AMBIENTE:")
-print(f"Todas as chaves: {list(os.environ.keys())}")
-print(f"POSTGRES_PASSWORD existe? {'POSTGRES_PASSWORD' in os.environ}")
-print(f"Valor recebido: '{os.getenv('POSTGRES_PASSWORD')}'")
-print("="*30 + "\n")
-# -----------------------------------------------
-    
 # --- CONFIGURAÇÕES ---
 # Kafka
 KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')

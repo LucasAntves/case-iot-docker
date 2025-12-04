@@ -151,9 +151,9 @@ Esse comando servirá para escalar nossa producer, podemos gerar mais dados e ch
 ```
 
 ### O que vai acontecer?
-O Docker vai criar nome-producer-1  
-O Docker vai criar nome-producer-2  
-O Docker vai criar nome-producer-3
+O Docker vai criar mais dois containers:  
+`nome-producer-2`  
+`nome-producer-3`
 
 Caso tenha aumentado a produção de dados e queira checar, podemos visualizar no Kafdrop através do caminho:  
 http://localhost:9000

@@ -49,8 +49,8 @@ graph TD
     Browser -. "Acesso HTTP (Porta 3000)" .-> Metabase
 ```
 
-### Stack
-Gerador de Dados (Producer): Script em Python 3.9 (biblioteca Faker) simulando dispositivos IoT com envio em alta frequência.
+## Stack
+Gerador de Dados (Producer): Script em Python 3.9 (biblioteca Faker) simulando dispositivos IoT com envio de dados em tempo real.
 
 Ingestão (Message Broker): Apache Kafka + Zookeeper. Atua como buffer de resiliência, desacoplando produção e consumo.
 
@@ -63,7 +63,7 @@ Visualização (BI): Metabase. Dashboard interativo para monitoramento em tempo 
 Infraestrutura: Docker & Docker Compose. Garante a orquestração e reprodutibilidade do ambiente.
 
 
-#### Detalhes da Implementação
+### Detalhes da Implementação
 
 1. Segurança e Configuração
 Variáveis de Ambiente: Nenhuma credencial (senhas de banco) está exposta no código fonte (hardcoded). Todas as configurações sensíveis são injetadas via os.getenv através do Docker Compose.
@@ -80,15 +80,19 @@ Integridade de Dados: O Spark aplica um schema rígido (TimestampType, DoubleTyp
 
 Persistência Eficiente: Utiliza a estratégia foreachBatch para gravações otimizadas via driver JDBC no PostgreSQL.
 
-### Como Executar o Projeto
+## Como Executar o Projeto
 Pré-requisitos:  
 [Docker e Docker Compose](https://www.docker.com/get-started/)
  instalados
-#### Passo a Passo 
+### Passo a Passo 
 1. Clone o repositório utilizando o comando abaixo:  
+```bash
 git clone https://github.com/LucasAntves/case-iot-docker.git
-
+```
 2. Vá para a pasta do projeto que acabou de clonar e abra o terminal.
+```bash
+cd case-iot-docker
+```
 
 3. Com o terminal aberto na **raiz do projeto**, execute o seguinte comando:
 
@@ -101,7 +105,9 @@ docker compose up --build -d
 docker compose down -v
 ```
 
-#### Acessando a tabela e o Dashboard:
+## Dashboard e monitoramento de logs:
+
+### Acessando o Dashboard na web:  
 
 Com nossos containers rodando e nossos dados sendo gerados, vamos usar nossa ferramenta de visualização:
 
@@ -115,7 +121,8 @@ Senha: admin321
 
 (Nota: O login acima é pré-configurado via script de automação).
 
-**Monitoramento via Terminal**  
+### Monitoramento de logs via terminal:  
+
 Você pode acompanhar o fluxo de dados em tempo real pelos logs:
 Faremos pelo terminal na raiz do projeto.
 
@@ -135,15 +142,15 @@ docker logs -f (NOME DA PRODUCER)
  docker logs -f spark-consumer
 ```
 
+## Escalabilidade da producer
 
-***Escalabilidade da producer:***  
 Esse comando servirá para escalar nossa producer, podemos gerar mais dados e checar como o kafka írá se comportar.
 
 ```bash
  docker compose up -d --scale sensor-producer=3
 ```
 
-#### O que vai acontecer?
+### O que vai acontecer?
 O Docker vai criar nome-producer-1  
 O Docker vai criar nome-producer-2  
 O Docker vai criar nome-producer-3
@@ -153,17 +160,17 @@ http://localhost:9000
 
 Abra o tópico sensores-iot e cheque o size, atualize a página e teremos os números atualizados
 
-#### Após o teste, podemos desligar algumas producers:  
+### Desligando containers producer  
 ```bash
 docker stop NOME-PRODUCER
 docker rm NOME-PRODUCER
 ```
 
 
-### Testes e Validação
+## Testes e Validação
 O projeto conta com uma suíte de testes automatizados (unittest).
 
-#### Configuração do Ambiente Virtual (Python)
+### Configuração do Ambiente Virtual (Python)
 
 Para executar os scripts locais ou rodar os testes unitários, recomenda-se criar um ambiente virtual para isolar as dependências.
 
@@ -199,7 +206,7 @@ Unitários: Validação de schema JSON, tipagem de dados e regras de negócio (l
 
 Integração: Validação da conexão com Kafka (envio e recebimento real de mensagens).
 
-### Sobre o Dashboard (Analytics)
+## Sobre o Dashboard (Analytics)
 O painel do Metabase já vem pré-configurado e inclui:
 
 * KPIs em Tempo Real: Temperatura e Umidade médias atuais.
@@ -210,7 +217,7 @@ O painel do Metabase já vem pré-configurado e inclui:
 
 * (O Dashboard possui Auto-Refresh configurado para atualizar a cada 60 segundos).
 
-### Melhorias Futuras (Roadmap)
+## Melhorias Futuras (Roadmap)
 Pontos identificados para evolução da arquitetura em um cenário de escala massiva:
 
 **Camada de Data Lake (Raw):** Implementar gravação paralela em Amazon S3 ou DynamoDB para armazenamento de dados brutos a longo prazo.  

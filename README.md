@@ -17,7 +17,7 @@ graph TD
     end
 
     subgraph Docker ["🐳 Infraestrutura Docker (Docker Compose)"]
-        style Docker fill:#f0f8ff,stroke:#005f9e,stroke-width:2px
+        style Docker fill:#f0f8ff,stroke:#005f9e,stroke-width:2pxb
         
         subgraph Network ["🔗 Rede Interna: iot-network"]
             style Network fill:#fff,stroke:#666,stroke-dasharray: 5 5
@@ -113,14 +113,33 @@ Você pode acompanhar o fluxo de dados em tempo real pelos logs:
 Faremos pelo cmd na raiz do projeto.
 
 ***Ver envio de dados:***  
+Antes de ver o log, precisamos checar como nossa producer está no docker, para isso execute:  
 ```bash
-docker logs -f sensor-producer
+docker ps
+```
+O nome estará na coluna 'NAMES'. Assim que encontrar o nome da sua producer, rode o comando abaixo sem ( )
+
+```bash
+docker logs -f (NOME DA PRODUCER)
 ```
 
 ***Ver processamento Spark:***
 ```bash
  docker logs -f spark-consumer
 ```
+
+
+***Escalabilidade da producer:***  
+Esse comando servirá para escalar nossa producer, podemos colocar gerar mais dados e checar como o kafka írá se comportar.
+
+```bash
+ docker compose up -d --scale sensor-producer=3
+```
+
+#### O que vai acontecer?
+O Docker vai criar nome-producer-1  
+O Docker vai criar nome-producer-2  
+O Docker vai criar nome-producer-3
 
 ### Testes e Validação
 O projeto conta com uma suíte de testes automatizados (unittest).

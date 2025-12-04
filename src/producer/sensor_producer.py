@@ -2,31 +2,42 @@ import time
 import json
 import random
 import os
+import logging
+import sys
+from datetime import datetime
 from kafka import KafkaProducer
 from faker import Faker
-from datetime import datetime
 
-# --- CONFIGURAÇÕES DINÂMICAS ---
-# Pega do Docker ou usa localhost se não encontrar
+# --- CONFIGURAÇÃO DE LOGS (PROFISSIONAL) ---
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
+logger = logging.getLogger(__name__)
+
+# --- CONFIGURAÇÕES GERAIS ---
 BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
 TOPIC_NAME = 'sensores-iot'
 
-# lista de Cidades
-CIDADES = ["São Paulo", "Rio de Janeiro", "Curitiba", "Belo Horizonte", "Salvador", "Recife"]
+CIDADES = [
+    "São Paulo", "Rio de Janeiro", "Curitiba", "Belo Horizonte", 
+    "Salvador", "Recife", "Porto Alegre", "Brasília"
+]
 
 fake = Faker()
 
 def criar_produtor():
     try:
-        print(f"Tentando conectar ao Kafka em: {BOOTSTRAP_SERVERS}")
+        logger.info(f"Tentando conectar ao Kafka em: {BOOTSTRAP_SERVERS}")
         producer = KafkaProducer(
             bootstrap_servers=[BOOTSTRAP_SERVERS],
             value_serializer=lambda x: json.dumps(x).encode('utf-8')
         )
-        print("Conexão com Kafka estabelecida!")
+        logger.info("Conexão com Kafka estabelecida com sucesso!")
         return producer
     except Exception as e:
-        print(f"Erro ao conectar no Kafka: {e}")
+        logger.error(f"Falha ao conectar no Kafka: {e}")
         return None
 
 def gerar_dado_sensor():
@@ -41,25 +52,32 @@ def gerar_dado_sensor():
 
 def iniciar_envio():
     producer = None
-    # Tentativa de reconexão simples (caso o Kafka demore a subir)
     while producer is None:
         producer = criar_produtor()
         if producer is None:
-            print("Kafka indisponível. Tentando novamente em 5 segundos...")
+            logger.warning("Kafka indisponível. Tentando novamente em 5 segundos...")
             time.sleep(5)
 
-    print(f"Iniciando simulação de sensores para o tópico: {TOPIC_NAME}")
+    logger.info(f"Iniciando simulação de sensores para o tópico: {TOPIC_NAME}")
     
     try:
         while True:
             dado = gerar_dado_sensor()
             producer.send(TOPIC_NAME, value=dado)
-            print(f"Enviado: {dado}")
-            time.sleep(2) # Envia a cada 2 segundos
+            # Log apenas INFO, limpo e com data automática
+            logger.info(f"Enviado: {dado['cidade']} | {dado['temperatura']}°C | {dado['status']}")
+            time.sleep(0.1) 
             
     except KeyboardInterrupt:
-        print("\n Parando o envio...")
+        logger.info("\n Parando o envio pelo usuário.")
         producer.close()
+    except Exception as e:
+        # exc_info=True mostra ONDE o erro aconteceu (linha do código)
+        logger.error(f"Erro inesperado no loop de envio: {e}", exc_info=True)
+    finally:
+        if producer:
+            producer.close()
+            logger.info("Conexão com Kafka fechada.")
 
 if __name__ == "__main__":
-    iniciar_envio() 
+    iniciar_envio()

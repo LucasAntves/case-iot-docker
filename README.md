@@ -82,13 +82,13 @@ Persistência Eficiente: Utiliza a estratégia foreachBatch para gravações oti
 
 ### Como Executar o Projeto
 Pré-requisitos:  
-Docker e Docker Compose instalados.
-
+[Docker e Docker Compose](https://www.docker.com/get-started/)
+ instalados
 #### Passo a Passo 
 1. Clone o repositório utilizando o comando abaixo:  
 git clone https://github.com/LucasAntves/case-iot-docker.git
 
-2. Vá para a pasta do projeto que acabou de clonar e abra o CMD ou Bash.
+2. Vá para a pasta do projeto que acabou de clonar e abra o terminal.
 
 3. Com o terminal aberto na **raiz do projeto**, execute o seguinte comando:
 
@@ -96,7 +96,14 @@ git clone https://github.com/LucasAntves/case-iot-docker.git
 docker compose up --build -d
 ```
 
+4. Caso precise desligar os container e limpar tudo que foi gravado no postgres, use este comando
+```bash
+docker compose down -v
+```
+
 #### Acessando a tabela e o Dashboard:
+
+Com nossos containers rodando e nossos dados sendo gerados, vamos usar nossa ferramenta de visualização:
 
 Aguarde cerca de 1 minuto para a inicialização total do Metabase.
 
@@ -110,7 +117,7 @@ Senha: admin321
 
 **Monitoramento via Terminal**  
 Você pode acompanhar o fluxo de dados em tempo real pelos logs:
-Faremos pelo cmd na raiz do projeto.
+Faremos pelo terminal na raiz do projeto.
 
 ***Ver envio de dados:***  
 Antes de ver o log, precisamos checar como nossa producer está no docker, para isso execute:  
@@ -130,7 +137,7 @@ docker logs -f (NOME DA PRODUCER)
 
 
 ***Escalabilidade da producer:***  
-Esse comando servirá para escalar nossa producer, podemos colocar gerar mais dados e checar como o kafka írá se comportar.
+Esse comando servirá para escalar nossa producer, podemos gerar mais dados e checar como o kafka írá se comportar.
 
 ```bash
  docker compose up -d --scale sensor-producer=3
@@ -140,6 +147,18 @@ Esse comando servirá para escalar nossa producer, podemos colocar gerar mais da
 O Docker vai criar nome-producer-1  
 O Docker vai criar nome-producer-2  
 O Docker vai criar nome-producer-3
+
+Caso tenha aumentado a produção de dados e queira checar, podemos visualizar no Kafdrop através do caminho:  
+http://localhost:9000
+
+Abra o tópico sensores-iot e cheque o size, atualize a página e teremos os números atualizados
+
+#### Após o teste, podemos desligar algumas producers:  
+```bash
+docker stop NOME-PRODUCER
+docker rm NOME-PRODUCER
+```
+
 
 ### Testes e Validação
 O projeto conta com uma suíte de testes automatizados (unittest).

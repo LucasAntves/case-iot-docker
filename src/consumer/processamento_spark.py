@@ -34,7 +34,6 @@ JDBC_URL = f"jdbc:postgresql://{DB_HOST}:{DB_PORT}/{DB_NAME}"
 def salvar_no_postgres(df, batch_id):
     """Função chamada para cada micro-batch."""
     try:
-        # Conta linhas para logar estatísticas
         count = df.count()
         if count > 0:
             logger.info(f"Processando Batch {batch_id} com {count} registros...")
@@ -64,7 +63,6 @@ def main():
         .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.postgresql:postgresql:42.6.0")
         .getOrCreate())
 
-    # Reduz o ruído interno do Spark para vermos só nossos logs
     spark.sparkContext.setLogLevel("WARN")
     logger.info("Spark Session criada com sucesso!")
 

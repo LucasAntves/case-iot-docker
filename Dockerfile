@@ -9,7 +9,6 @@ RUN apt-get update && \
     apt-get install -y openjdk-11-jre-headless procps && \
     rm -rf /var/lib/apt/lists/*
 
-# --- A CORREÇÃO MÁGICA ---
 # Detecta a arquitetura (amd64 ou arm64) e cria um link simbólico genérico
 RUN ln -s /usr/lib/jvm/java-11-openjdk-$(dpkg --print-architecture) /usr/lib/jvm/java-home
 
